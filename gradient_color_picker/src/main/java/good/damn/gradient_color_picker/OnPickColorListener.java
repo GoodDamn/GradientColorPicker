@@ -1,4 +1,4 @@
-package good.damn.gradientcolorpicker;
+package good.damn.gradient_color_picker;
 
 public interface OnPickColorListener {
 

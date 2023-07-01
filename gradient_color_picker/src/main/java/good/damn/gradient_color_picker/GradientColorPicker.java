@@ -1,4 +1,4 @@
-package good.damn.gradientcolorpicker;
+package good.damn.gradient_color_picker;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,9 +13,6 @@ import android.view.View;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public class GradientColorPicker extends View implements View.OnTouchListener{
 
