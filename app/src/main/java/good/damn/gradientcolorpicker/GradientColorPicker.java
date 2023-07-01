@@ -35,6 +35,8 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
         mPaintStroke.setColor(0xffffffff);
         mPaintStroke.setStyle(Paint.Style.STROKE);
         mPaintStroke.setStrokeWidth(3);
+
+        mPaintStroke.setAntiAlias(true);
     }
 
     public GradientColorPicker(Context context) {
