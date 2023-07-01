@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
 
     private float mStickX = 0;
     private float mStickY = 0;
+    private float mStickRadius = 32;
 
     private void init() {
         mBitmapGradient = BitmapFactory.decodeResource(getResources(), R.drawable.grad_pal);
@@ -60,12 +62,36 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
         mOnPickColorListener = onPickColorListener;
     }
 
+    public void setStickStrokeColor(@ColorInt int color) {
+        mPaintStroke.setColor(color);
+    }
+
+    public void setStickWidth(float width) {
+        mPaintStroke.setStrokeWidth(width);
+    }
+
+    public void setStickRadius(float rad) {
+        mStickRadius = rad;
+    }
+
+    public int getStickStrokeColor() {
+        return mPaintStroke.getColor();
+    }
+
+    public float getStickWidth() {
+        return mPaintStroke.getStrokeWidth();
+    }
+
+    public float getStickRadius() {
+        return mStickRadius;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawBitmap(mBitmapGradient,0,0,mPaint);
-        canvas.drawCircle(mStickX,mStickY, 32,mPaint);
-        canvas.drawCircle(mStickX,mStickY,32,mPaintStroke);
+        canvas.drawCircle(mStickX,mStickY, mStickRadius,mPaint);
+        canvas.drawCircle(mStickX,mStickY,mStickRadius,mPaintStroke);
     }
 
     @SuppressLint("DrawAllocation")
