@@ -64,8 +64,8 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawBitmap(mBitmapGradient,0,0,mPaint);
-        canvas.drawCircle(mStickX,mStickY, 25,mPaint);
-        canvas.drawCircle(mStickX,mStickY,25,mPaintStroke);
+        canvas.drawCircle(mStickX,mStickY, 32,mPaint);
+        canvas.drawCircle(mStickX,mStickY,32,mPaintStroke);
     }
 
     @SuppressLint("DrawAllocation")
@@ -87,8 +87,17 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
         int x = (int) motionEvent.getX();
         int y = (int) motionEvent.getY();
 
-        if (y < 0 || y >= mBitmapGradient.getHeight())
-            return true;
+        if (y < 0) {
+            y = 0;
+        } else if (y >= mBitmapGradient.getHeight()) {
+            y = mBitmapGradient.getHeight()-1;
+        }
+
+        if (x < 0) {
+            x = 0;
+        } else if (x >= mBitmapGradient.getWidth()) {
+            x = mBitmapGradient.getWidth()-1;
+        }
 
         mStickX = x;
         mStickY = y;
