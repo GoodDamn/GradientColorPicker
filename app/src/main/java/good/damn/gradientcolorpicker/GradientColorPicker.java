@@ -20,6 +20,8 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
 
     private static final String TAG = "GradientColorPicker";
 
+    private OnPickColorListener mOnPickColorListener;
+
     private Paint mPaint;
     private Paint mPaintStroke;
     private Bitmap mBitmapGradient;
@@ -52,6 +54,10 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
     public GradientColorPicker(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    public void setOnPickColorListener(OnPickColorListener onPickColorListener) {
+        mOnPickColorListener = onPickColorListener;
     }
 
     @Override
@@ -88,6 +94,10 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
         mStickY = y;
 
         mPaint.setColor(mBitmapGradient.getPixel(x, y));
+
+        if (mOnPickColorListener != null) {
+            mOnPickColorListener.onPickColor(mPaint.getColor());
+        }
 
         invalidate();
         return true;
