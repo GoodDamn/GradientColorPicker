@@ -17,3 +17,9 @@ Add the dependency
 	dependencies {
 	        implementation 'com.github.GoodDamn:GradientColorPicker:1.0'
 	}
+
+
+
+
+https://github.com/GoodDamn/GradientColorPicker/assets/76108467/075b9cf1-2705-41a5-a820-c33931c4b370
+
