@@ -3,17 +3,16 @@ package good.damn.gradient_color_picker;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class GradientColorPicker
@@ -27,7 +26,10 @@ extends View {
     private Paint mPaint;
     private Paint mPaintStroke;
 
-    private Paint mPaintFill;
+    private Paint mPaintFillModel;
+
+    private LinearGradient mGradientColors;
+    private LinearGradient mGradientBw;
 
     private Bitmap mBitmapGradient;
 
@@ -38,13 +40,13 @@ extends View {
     private void init() {
         mPaint = new Paint();
         mPaintStroke = new Paint();
-        mPaintFill = new Paint();
+        mPaintFillModel = new Paint();
 
         mPaintStroke.setColor(0xffffffff);
         mPaintStroke.setStyle(Paint.Style.STROKE);
         mPaintStroke.setStrokeWidth(3);
 
-        mPaintFill.setAntiAlias(true);
+        mPaintFillModel.setAntiAlias(true);
         mPaintStroke.setAntiAlias(true);
     }
 
@@ -92,10 +94,32 @@ extends View {
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        if (!(mBitmapGradient == null ||
+            mBitmapGradient.isRecycled()
+        )) {
+            mBitmapGradient.recycle();
+        }
+    }
+
+    @Override
     protected void onDraw(
-        Canvas canvas
+        @NonNull Canvas canvas
     ) {
         super.onDraw(canvas);
+
+        mPaint.setShader(
+            mGradientColors
+        );
+        canvas.drawPaint(
+            mPaint
+        );
+
+        mPaint.setShader(
+            mGradientBw
+        );
 
         canvas.drawPaint(
             mPaint
@@ -105,7 +129,7 @@ extends View {
             mStickX,
             mStickY,
             mStickRadius,
-            mPaintFill
+            mPaintFillModel
         );
 
         canvas.drawCircle(
@@ -134,8 +158,9 @@ extends View {
         );
 
         float mh = getHeight() * 0.5f;
+        float mw = getWidth() * 0.5f;
 
-        final LinearGradient gradient = new LinearGradient(
+        mGradientColors = new LinearGradient(
             0,
             mh,
             getWidth(),
@@ -161,8 +186,24 @@ extends View {
             Shader.TileMode.CLAMP
         );
 
-        mPaint.setShader(
-            gradient
+        mGradientBw = new LinearGradient(
+            mw,
+            0,
+            mw,
+            getHeight(),
+            new int[] {
+              0xff000000,
+              0,
+              0,
+              0xffffffff
+            },
+            new float[] {
+              0.0f,
+              0.25f,
+              0.75f,
+              1.0f
+            },
+            Shader.TileMode.CLAMP
         );
 
         post(() -> {
@@ -201,7 +242,7 @@ extends View {
         mStickX = x;
         mStickY = y;
 
-        mPaintFill.setColor(
+        mPaintFillModel.setColor(
             mBitmapGradient.getPixel(
                 x, y
             )
@@ -209,7 +250,7 @@ extends View {
 
         if (mOnPickColorListener != null) {
             mOnPickColorListener.onPickColor(
-                mPaintFill.getColor()
+                mPaintFillModel.getColor()
             );
         }
 
