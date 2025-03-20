@@ -5,7 +5,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,14 +16,19 @@ import android.view.View;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 
-public class GradientColorPicker extends View implements View.OnTouchListener{
+public class GradientColorPicker
+extends View {
 
     private static final String TAG = "GradientColorPicker";
 
+    @Nullable
     private OnPickColorListener mOnPickColorListener;
 
     private Paint mPaint;
     private Paint mPaintStroke;
+
+    private Paint mPaintFill;
+
     private Bitmap mBitmapGradient;
 
     private float mStickX = 0;
@@ -29,14 +36,15 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
     private float mStickRadius = 32;
 
     private void init() {
-        mBitmapGradient = BitmapFactory.decodeResource(getResources(), R.drawable.grad_pal);
         mPaint = new Paint();
         mPaintStroke = new Paint();
+        mPaintFill = new Paint();
 
         mPaintStroke.setColor(0xffffffff);
         mPaintStroke.setStyle(Paint.Style.STROKE);
         mPaintStroke.setStrokeWidth(3);
 
+        mPaintFill.setAntiAlias(true);
         mPaintStroke.setAntiAlias(true);
     }
 
@@ -84,31 +92,99 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(
+        Canvas canvas
+    ) {
         super.onDraw(canvas);
-        canvas.drawBitmap(mBitmapGradient,0,0,mPaint);
-        canvas.drawCircle(mStickX,mStickY, mStickRadius,mPaint);
-        canvas.drawCircle(mStickX,mStickY,mStickRadius,mPaintStroke);
+
+        canvas.drawPaint(
+            mPaint
+        );
+
+        canvas.drawCircle(
+            mStickX,
+            mStickY,
+            mStickRadius,
+            mPaintFill
+        );
+
+        canvas.drawCircle(
+            mStickX,
+            mStickY,
+            mStickRadius,
+            mPaintStroke
+        );
     }
 
     @SuppressLint("DrawAllocation")
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+    protected void onLayout(
+        boolean changed,
+        int left,
+        int top,
+        int right,
+        int bottom
+    ) {
+        super.onLayout(
+            changed,
+            left,
+            top,
+            right,
+            bottom
+        );
 
-        setOnTouchListener(null);
-        Log.d(TAG, "onLayout: WIDTH_GRAD: " + mBitmapGradient.getWidth() + " WIDTH: " + getWidth());
-        if (mBitmapGradient.getWidth() < getWidth()) {
-            mBitmapGradient = Bitmap.createScaledBitmap(mBitmapGradient, getWidth(), getHeight(), false);
-        }
-        setOnTouchListener(this);
+        float mh = getHeight() * 0.5f;
+
+        final LinearGradient gradient = new LinearGradient(
+            0,
+            mh,
+            getWidth(),
+            mh,
+            new int[] {
+                0xffff0000,
+                0xffffff00,
+                0xff00ff00,
+                0xff00ffff,
+                0xff0000ff,
+                0xffff00ff,
+                0xffff0000
+            },
+            new float[] {
+                0.0f,
+                0.167f,
+                0.333f,
+                0.500f,
+                0.667f,
+                0.834f,
+                1.0f
+            },
+            Shader.TileMode.CLAMP
+        );
+
+        mPaint.setShader(
+            gradient
+        );
+
+        post(() -> {
+            mBitmapGradient = Bitmap.createBitmap(
+                getWidth(),
+                getHeight(),
+                Bitmap.Config.ARGB_8888
+            );
+            final Canvas copy = new Canvas(
+                mBitmapGradient
+            );
+            draw(copy);
+        });
+
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        int x = (int) motionEvent.getX();
-        int y = (int) motionEvent.getY();
+    public boolean onTouchEvent(
+        MotionEvent event
+    ) {
+        int x = (int) event.getX();
+        int y = (int) event.getY();
 
         if (y < 0) {
             y = 0;
@@ -125,10 +201,16 @@ public class GradientColorPicker extends View implements View.OnTouchListener{
         mStickX = x;
         mStickY = y;
 
-        mPaint.setColor(mBitmapGradient.getPixel(x, y));
+        mPaintFill.setColor(
+            mBitmapGradient.getPixel(
+                x, y
+            )
+        );
 
         if (mOnPickColorListener != null) {
-            mOnPickColorListener.onPickColor(mPaint.getColor());
+            mOnPickColorListener.onPickColor(
+                mPaintFill.getColor()
+            );
         }
 
         invalidate();
