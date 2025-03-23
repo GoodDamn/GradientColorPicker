@@ -35,15 +35,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 
-publishing {
-    publications {
-        register(MavenPublication) {
-            groupId = 'com.github.GoodDamn'
-            artifactId = 'gradient-color-picker'
-            version = '1.1'
-
-            afterEvaluate {
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
                 from components.findByName("release")
+
+                groupId = "com.github.GoodDamn"
+                artifactId = "gradient-color-picker"
+                version = "1.2"
             }
         }
     }
