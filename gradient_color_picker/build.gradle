@@ -42,7 +42,7 @@ afterEvaluate {
                 from components.findByName('release')
                 groupId "com.github.GoodDamn"
                 artifactId "gradient-color-picker"
-                version "1.3"
+                version "1.4"
             }
         }
     }
