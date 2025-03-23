@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'good.damn.gradient_color_picker'
-    compileSdk 34
+    compileSdk 33
 
     defaultConfig {
         minSdk 16
-        targetSdk 34
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -42,7 +42,7 @@ afterEvaluate {
                 from components.findByName('release')
                 groupId "com.github.GoodDamn"
                 artifactId "gradient-color-picker"
-                version "1.4"
+                version "1.5"
             }
         }
     }
